@@ -96,6 +96,7 @@ resource "aws_eks_node_group" "main" {
   subnet_ids      = var.private_app_subnet_ids
   capacity_type   = var.capacity_type
   ami_type        = var.ami_type
+  version         = var.cluster_version
 
   scaling_config {
     desired_size = var.desired_size

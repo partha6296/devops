@@ -8,8 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    # Update this with your GitHub repository URL
-    repoURL: 'https://github.com/parthasarathi-mandal/devops_project.git'
+    repoURL: 'https://github.com/partha6296/devops.git'
     targetRevision: HEAD
     path: gitops/argo-apps
     directory:

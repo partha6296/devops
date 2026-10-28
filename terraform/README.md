@@ -27,7 +27,7 @@ flowchart TD
         end
 
         subgraph PrivateAppTier["Tier 2: Private Application Subnets (10.0.11.0/24, 10.0.12.0/24, 10.0.13.0/24)"]
-            EKS_CP["Amazon EKS Control Plane (1.30, KMS Encrypted)"]
+            EKS_CP["Amazon EKS Control Plane (1.34, KMS Encrypted)"]
             subgraph EKS_Nodes["EKS Managed Node Groups (IMDSv2 Enforced)"]
                 PodAuth["User / Auth Pods (:3001)"]
                 PodTask["Task Pods (:3002)"]

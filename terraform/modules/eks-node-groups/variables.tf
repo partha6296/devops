@@ -60,7 +60,13 @@ variable "disk_size" {
 }
 
 variable "ami_type" {
-  description = "Type of Amazon Machine Image (AMI) associated with the EKS Node Group. EKS 1.30+ requires AL2023."
+  description = "Type of Amazon Machine Image (AMI) associated with the EKS Node Group. EKS requires AL2023 for modern versions."
   type        = string
   default     = "AL2023_x86_64_STANDARD"
+}
+
+variable "cluster_version" {
+  description = "Kubernetes version for the EKS node group. Must align with cluster version (e.g., 1.34)."
+  type        = string
+  default     = "1.34"
 }

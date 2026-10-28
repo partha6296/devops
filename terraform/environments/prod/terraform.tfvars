@@ -12,7 +12,7 @@ private_db_subnet_cidrs  = ["10.2.21.0/24", "10.2.22.0/24", "10.2.23.0/24"]
 single_nat_gateway   = false # Highly available (1 NAT Gateway per AZ)
 enable_vpc_endpoints = true
 
-cluster_version    = "1.30"
+cluster_version    = "1.34"
 eks_instance_types = ["m5.large"]
 eks_desired_size   = 3
 eks_min_size       = 3

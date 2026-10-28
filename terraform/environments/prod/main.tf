@@ -86,6 +86,7 @@ module "eks_node_groups" {
   project_name                = var.project_name
   environment                 = var.environment
   cluster_name                = module.eks.cluster_name
+  cluster_version             = var.cluster_version
   private_app_subnet_ids      = module.networking.private_app_subnet_ids
   eks_nodes_security_group_id = module.security_groups.eks_nodes_security_group_id
   instance_types              = var.eks_instance_types
@@ -145,6 +146,7 @@ module "cloudfront" {
   s3_bucket_regional_domain_name = module.s3.frontend_bucket_regional_domain_name
   custom_domain_name             = var.frontend_domain_name
   acm_certificate_arn            = module.acm.certificate_arn
+  alb_dns_name                   = module.alb.alb_dns_name
 }
 
 module "alb" {

@@ -92,6 +92,11 @@ env: {}
 # Reference secrets or configmaps
 envFrom: []
 
+# Prometheus metrics scraping configuration
+metrics:
+  enabled: true
+  path: /metrics
+
 nodeSelector: {}
 tolerations: []
 affinity: {}

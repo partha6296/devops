@@ -59,9 +59,9 @@ variable "enable_vpc_endpoints" {
 }
 
 variable "cluster_version" {
-  description = "EKS Kubernetes version"
+  description = "EKS Kubernetes version (supported: 1.34, 1.35, 1.36, 1.37)"
   type        = string
-  default     = "1.30"
+  default     = "1.34"
 }
 
 variable "eks_instance_types" {

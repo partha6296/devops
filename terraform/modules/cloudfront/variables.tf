@@ -34,3 +34,9 @@ variable "acm_certificate_arn" {
   type        = string
   default     = ""
 }
+
+variable "alb_dns_name" {
+  description = "Optional DNS name of the Application Load Balancer to route /api/* traffic"
+  type        = string
+  default     = ""
+}

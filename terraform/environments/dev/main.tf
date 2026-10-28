@@ -111,6 +111,7 @@ module "eks_node_groups" {
   project_name                = var.project_name
   environment                 = var.environment
   cluster_name                = module.eks.cluster_name
+  cluster_version             = var.cluster_version
   private_app_subnet_ids      = module.networking.private_app_subnet_ids
   eks_nodes_security_group_id = module.security_groups.eks_nodes_security_group_id
   instance_types              = var.eks_instance_types
@@ -160,20 +161,7 @@ module "s3" {
 }
 
 # ==============================================================================
-# 12. ACM (TLS Certificate)
-# ==============================================================================
-module "acm" {
-  source = "../../modules/acm"
-
-  create_certificate        = var.create_custom_domain_records
-  domain_name               = var.domain_name
-  subject_alternative_names = var.frontend_domain_name != "" && var.api_domain_name != "" ? [var.frontend_domain_name, var.api_domain_name] : []
-  environment               = var.environment
-  project_name              = var.project_name
-}
-
-# ==============================================================================
-# 13. CloudFront CDN (Private S3 Origin with OAC)
+# 12. CloudFront CDN (Private S3 Origin with OAC & Dynamic ALB Routing)
 # ==============================================================================
 module "cloudfront" {
   source = "../../modules/cloudfront"
@@ -183,12 +171,13 @@ module "cloudfront" {
   s3_bucket_id                   = module.s3.frontend_bucket_id
   s3_bucket_arn                  = module.s3.frontend_bucket_arn
   s3_bucket_regional_domain_name = module.s3.frontend_bucket_regional_domain_name
-  custom_domain_name             = var.frontend_domain_name
-  acm_certificate_arn            = module.acm.certificate_arn
+  custom_domain_name             = ""
+  acm_certificate_arn            = ""
+  alb_dns_name                   = module.alb.alb_dns_name
 }
 
 # ==============================================================================
-# 14. Application Load Balancer (Public HTTPS Entrypoint)
+# 13. Application Load Balancer (Public HTTP Entrypoint behind CloudFront)
 # ==============================================================================
 module "alb" {
   source = "../../modules/alb"
@@ -198,26 +187,10 @@ module "alb" {
   vpc_id                = module.networking.vpc_id
   public_subnet_ids     = module.networking.public_subnet_ids
   alb_security_group_id = module.security_groups.alb_security_group_id
-  enable_https          = var.create_custom_domain_records
-  acm_certificate_arn   = module.acm.certificate_arn
+  enable_https          = false
+  acm_certificate_arn   = ""
   enable_access_logs    = false
   logs_bucket_id        = module.s3.logs_bucket_id
-}
-
-# ==============================================================================
-# 15. Route 53 (DNS Alias Records)
-# ==============================================================================
-module "route53" {
-  source = "../../modules/route53"
-
-  create_dns_records     = var.create_custom_domain_records
-  hosted_zone_id         = var.hosted_zone_id
-  frontend_subdomain     = var.frontend_domain_name
-  api_subdomain          = var.api_domain_name
-  cloudfront_domain_name = module.cloudfront.distribution_domain_name
-  cloudfront_zone_id     = module.cloudfront.distribution_hosted_zone_id
-  alb_dns_name           = module.alb.alb_dns_name
-  alb_zone_id            = module.alb.alb_zone_id
 }
 
 # ==============================================================================

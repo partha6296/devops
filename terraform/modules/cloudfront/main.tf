@@ -13,7 +13,8 @@ resource "aws_cloudfront_origin_access_control" "oac" {
 # 2. CloudFront Distribution
 # ==============================================================================
 locals {
-  s3_origin_id = "S3-${var.s3_bucket_id}"
+  s3_origin_id  = "S3-${var.s3_bucket_id}"
+  alb_origin_id = "ALB-${var.project_name}-${var.environment}"
 }
 
 resource "aws_cloudfront_distribution" "frontend" {
@@ -22,10 +23,53 @@ resource "aws_cloudfront_distribution" "frontend" {
   default_root_object = "index.html"
   aliases             = var.custom_domain_name != "" ? [var.custom_domain_name] : []
 
+  # Origin 1: Private S3 Bucket for Static Assets
   origin {
     domain_name              = var.s3_bucket_regional_domain_name
     origin_id                = local.s3_origin_id
     origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
+  }
+
+  # Origin 2: Public ALB for Microservice REST APIs
+  dynamic "origin" {
+    for_each = var.alb_dns_name != "" ? [1] : []
+    content {
+      domain_name = var.alb_dns_name
+      origin_id   = local.alb_origin_id
+
+      custom_origin_config {
+        http_port              = 80
+        https_port             = 443
+        origin_protocol_policy = "http-only"
+        origin_ssl_protocols   = ["TLSv1.2"]
+      }
+    }
+  }
+
+  # Dynamic API Routing to ALB (/api/*)
+  dynamic "ordered_cache_behavior" {
+    for_each = var.alb_dns_name != "" ? [1] : []
+    content {
+      path_pattern     = "/api/*"
+      allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+      cached_methods   = ["GET", "HEAD"]
+      target_origin_id = local.alb_origin_id
+
+      forwarded_values {
+        query_string = true
+        headers      = ["Accept", "Accept-Language", "Authorization", "Origin", "Referer"]
+
+        cookies {
+          forward = "all"
+        }
+      }
+
+      viewer_protocol_policy = "redirect-to-https"
+      min_ttl                = 0
+      default_ttl            = 0
+      max_ttl                = 0
+      compress               = true
+    }
   }
 
   default_cache_behavior {

@@ -61,9 +61,9 @@ variable "enable_vpc_endpoints" {
 
 # --- EKS ---
 variable "cluster_version" {
-  description = "EKS Kubernetes version"
+  description = "EKS Kubernetes version (supported: 1.34, 1.35, 1.36, 1.37)"
   type        = string
-  default     = "1.30"
+  default     = "1.34"
 }
 
 variable "eks_instance_types" {
@@ -157,33 +157,4 @@ variable "ecr_repository_names" {
   ]
 }
 
-# --- Domain & Route 53 (Optional / Configurable) ---
-variable "create_custom_domain_records" {
-  description = "Whether to create custom ACM and Route 53 records (set false if no custom domain yet)"
-  type        = bool
-  default     = false
-}
-
-variable "domain_name" {
-  description = "Base domain name"
-  type        = string
-  default     = "example.com"
-}
-
-variable "frontend_domain_name" {
-  description = "Custom domain for the frontend SPA (e.g. app.example.com)"
-  type        = string
-  default     = ""
-}
-
-variable "api_domain_name" {
-  description = "Custom domain for the backend API (e.g. api.example.com)"
-  type        = string
-  default     = ""
-}
-
-variable "hosted_zone_id" {
-  description = "Existing Route 53 Hosted Zone ID"
-  type        = string
-  default     = ""
-}
+# --- End of Dev Variables ---

@@ -38,6 +38,16 @@ output "cloudfront_domain_name" {
   value       = module.cloudfront.distribution_domain_name
 }
 
+output "cloudfront_distribution_id" {
+  description = "ID of the CloudFront distribution for automated cache invalidations"
+  value       = module.cloudfront.distribution_id
+}
+
+output "frontend_s3_bucket" {
+  description = "Private S3 bucket name for frontend static build assets"
+  value       = module.s3.frontend_bucket_id
+}
+
 output "rds_endpoint" {
   description = "Private connection endpoint for the RDS database"
   value       = module.rds.db_instance_endpoint
